@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5538770509542773786}
   - component: {fileID: 1667217980305955794}
   - component: {fileID: 6262397729709988685}
+  - component: {fileID: 4215112148741089150}
   m_Layer: 0
   m_Name: Bush_0
   m_TagString: Untagged
@@ -120,3 +121,16 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 1}
   m_Direction: 0
+--- !u!114 &4215112148741089150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5387027972878618661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e9275b761714443a08a869f816f7f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyVFX: {fileID: 3187971841215840929, guid: f78ca9fff3fb4ee4bbff4fa5c5670ea9, type: 3}

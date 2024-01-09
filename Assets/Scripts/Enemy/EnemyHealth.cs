@@ -28,7 +28,6 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeDamage(int damage){
         currentHealth -= damage;
-        Debug.Log("tomou dano");
         knockback.GetKnockBack(PlayerController.Instance.transform, knockBackThrust);
         StartCoroutine(flash.FlashRoutine());
         StartCoroutine(CheckDetectDeathRoutine());
