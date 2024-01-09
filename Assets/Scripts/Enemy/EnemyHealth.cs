@@ -13,29 +13,29 @@ public class EnemyHealth : MonoBehaviour
     private Flash flash;
 
     private void Awake() {
-        knockback = GetComponent<Knockback>();
         flash = GetComponent<Flash>();
+        knockback = GetComponent<Knockback>();
     }
 
     private void Start() {
         currentHealth = startingHealth;
     }
 
-    private IEnumerator CheckDetectDeathRoutine(){
-        yield return new WaitForSeconds(flash.GetRestoureMatTime());
+    public void TakeDamage(int damage) {
+        currentHealth -= damage;
+        knockback.GetKnockedBack(PlayerController.Instance.transform, knockBackThrust);
+        StartCoroutine(flash.FlashRoutine());
+        StartCoroutine(CheckDetectDeathRoutine());
+    }
+
+    private IEnumerator CheckDetectDeathRoutine() {
+        yield return new WaitForSeconds(flash.GetRestoreMatTime());
         DetectDeath();
     }
 
-    public void TakeDamage(int damage){
-        currentHealth -= damage;
-        knockback.GetKnockBack(PlayerController.Instance.transform, knockBackThrust);
-        StartCoroutine(flash.FlashRoutine());
-        StartCoroutine(CheckDetectDeathRoutine());
-        //DetectDeath();
-    }
-
-    private void DetectDeath(){
-        if (currentHealth <= 0){
+    public void DetectDeath() {
+        if (currentHealth <= 0) {
+            Score.scoreCount += 1;
             Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
