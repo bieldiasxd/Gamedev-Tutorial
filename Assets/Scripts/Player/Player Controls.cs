@@ -142,6 +142,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Exit"",
+            ""id"": ""63465c07-3a4b-40c7-b62e-97b7b3082b44"",
+            ""actions"": [
+                {
+                    ""name"": ""Close"",
+                    ""type"": ""Button"",
+                    ""id"": ""97f7cd02-17d1-4894-b426-21bcdeb2f24b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""6c8f9861-31a3-408b-94d1-133c3ec8e277"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Close"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -153,6 +181,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Combat = asset.FindActionMap("Combat", throwIfNotFound: true);
         m_Combat_Attack = m_Combat.FindAction("Attack", throwIfNotFound: true);
         m_Combat_Dash = m_Combat.FindAction("Dash", throwIfNotFound: true);
+        // Exit
+        m_Exit = asset.FindActionMap("Exit", throwIfNotFound: true);
+        m_Exit_Close = m_Exit.FindAction("Close", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -310,6 +341,52 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public CombatActions @Combat => new CombatActions(this);
+
+    // Exit
+    private readonly InputActionMap m_Exit;
+    private List<IExitActions> m_ExitActionsCallbackInterfaces = new List<IExitActions>();
+    private readonly InputAction m_Exit_Close;
+    public struct ExitActions
+    {
+        private @PlayerControls m_Wrapper;
+        public ExitActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Close => m_Wrapper.m_Exit_Close;
+        public InputActionMap Get() { return m_Wrapper.m_Exit; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ExitActions set) { return set.Get(); }
+        public void AddCallbacks(IExitActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ExitActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ExitActionsCallbackInterfaces.Add(instance);
+            @Close.started += instance.OnClose;
+            @Close.performed += instance.OnClose;
+            @Close.canceled += instance.OnClose;
+        }
+
+        private void UnregisterCallbacks(IExitActions instance)
+        {
+            @Close.started -= instance.OnClose;
+            @Close.performed -= instance.OnClose;
+            @Close.canceled -= instance.OnClose;
+        }
+
+        public void RemoveCallbacks(IExitActions instance)
+        {
+            if (m_Wrapper.m_ExitActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IExitActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ExitActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ExitActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public ExitActions @Exit => new ExitActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -318,5 +395,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnAttack(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+    }
+    public interface IExitActions
+    {
+        void OnClose(InputAction.CallbackContext context);
     }
 }

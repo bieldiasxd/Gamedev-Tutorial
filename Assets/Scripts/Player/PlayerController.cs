@@ -33,6 +33,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Start() {
         playerControls.Combat.Dash.performed += _ => Dash();
+        playerControls.Exit.Close.performed += _ => Exit();
 
         startingMoveSpeed = moveSpeed;
     }
@@ -87,7 +88,10 @@ public class PlayerController : Singleton<PlayerController>
         StartCoroutine(EndDashRoutine());
     }
 }
-    
+    private void Exit(){
+        Application.Quit();
+        Debug.Log("Deu bom");
+    }
 
     private IEnumerator EndDashRoutine() {
         float dashTime = .2f;
